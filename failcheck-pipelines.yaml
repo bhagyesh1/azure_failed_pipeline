@@ -27,7 +27,7 @@ stages:
       persistCredentials: true
       
     - task: PowerShell@2
-      displayName: 'Check latest update'
+      displayName: 'Check previous pipeline is failed'
       inputs:
         targetType: 'inline'
         script: |
@@ -65,7 +65,7 @@ stages:
           cd $(System.DefaultWorkingDirectory)\
           git config --global bhagyesh1.email "bhagyeshvaniya00@gmail.com"
           git config --global bhagyesh1.name "Bhagyesh vaniya"
-          git pull origin $(branch)
+          git pull origin main
           git fetch --all
           git diff --name-only HEAD^ HEAD > latest_patch.txt
           cat latest_patch.txt
