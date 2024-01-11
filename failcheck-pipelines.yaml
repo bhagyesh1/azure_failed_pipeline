@@ -1,0 +1,74 @@
+#This azure-pipeline is for BSS-KYS-RMP for main and QC branch only.
+trigger:
+  batch: true
+  branches:
+    include:
+      - dev
+      - main
+
+pr:
+- dev
+- main
+- releases/*
+- hotfix/*
+      
+pool:
+  name: 'Self Hosted'
+  demands:
+    - agent.name -equals Windows-Agent
+    
+stages:
+- stage: 'Checkout_and_install_dependencies'
+  displayName: 'Checkout_and_install_dependencies'
+  jobs:
+  - job: 'Checkout'
+    displayName: 'Checkout_and_install_dependencies_Job'
+    steps:
+    - checkout: self
+      clean: true
+      persistCredentials: true
+      
+    - task: PowerShell@2
+      displayName: 'Check latest update'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Check if the previous pipeline run failed
+          if ($env:BUILD_REASON -eq "IndividualCI" -and $env:BUILD_RESULT -eq "Failed") {
+              # Get the commit details of the failed run
+              $failedCommit = $env:BUILD_SOURCEVERSION
+
+              # Get the changes in the failed commit using Git
+              $failedChanges = git diff-tree --no-commit-id --name-only -r $failedCommit
+
+              # Combine the failed changes with the latest changes
+              $allChanges = git diff-tree --no-commit-id --name-only -r HEAD
+
+              # Your logic to continue with the pipeline using the combined changes
+              # For example, you can trigger a new pipeline or perform necessary actions
+
+              Write-Host "Failed Changes: $failedChanges"
+              Write-Host "All Changes: $allChanges"
+          }
+          else {
+              Write-Host "No failed pipelines to handle."
+          }
+
+# Your regular pipeline steps go here
+
+# Optionally, save the commit details for the current run
+$env:BUILD_SOURCEVERSION > "$env:BUILD_SOURCESDIRECTORY\current_commit.txt"
+
+    - task: PowerShell@2
+      displayName: 'Check latest update'
+      inputs:
+        targetType: 'inline'
+        script: |
+          cd $(System.DefaultWorkingDirectory)\
+          git config --global bhagyesh1.email "bhagyeshvaniya00@gmail.com"
+          git config --global bhagyesh1.name "Bhagyesh vaniya"
+          git pull origin $(branch)
+          git fetch --all
+          git diff --name-only HEAD^ HEAD > latest_patch.txt
+          cat latest_patch.txt
+    
