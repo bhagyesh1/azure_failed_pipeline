@@ -3,11 +3,9 @@ trigger:
   batch: true
   branches:
     include:
-      - dev
       - main
 
 pr:
-- dev
 - main
 - releases/*
 - hotfix/*
@@ -54,10 +52,10 @@ stages:
               Write-Host "No failed pipelines to handle."
           }
 
-# Your regular pipeline steps go here
+          # Your regular pipeline steps go here
 
-# Optionally, save the commit details for the current run
-$env:BUILD_SOURCEVERSION > "$env:BUILD_SOURCESDIRECTORY\current_commit.txt"
+          # Optionally, save the commit details for the current run
+          $env:BUILD_SOURCEVERSION > "$env:BUILD_SOURCESDIRECTORY\current_commit.txt"
 
     - task: PowerShell@2
       displayName: 'Check latest update'
