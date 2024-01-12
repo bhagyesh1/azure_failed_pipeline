@@ -56,17 +56,4 @@ stages:
 
           # Optionally, save the commit details for the current run
           $env:Build.SourceVersion > "$env:BUILD_SOURCESDIRECTORY\current_commit.txt"
-
-    - task: PowerShell@2
-      displayName: 'Check latest update'
-      inputs:
-        targetType: 'inline'
-        script: |
-          cd $(System.DefaultWorkingDirectory)\
-          git config --global bhagyesh1.email "bhagyeshvaniya00@gmail.com"
-          git config --global bhagyesh1.name "Bhagyesh vaniya"
-          git pull origin main
-          git fetch --all
-          git diff --name-only HEAD^ HEAD > latest_patch.txt
-          cat latest_patch.txt
     
