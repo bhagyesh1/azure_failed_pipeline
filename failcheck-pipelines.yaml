@@ -34,7 +34,7 @@ stages:
           # Check if the previous pipeline run failed
           if ($env:BUILD_REASON -eq "IndividualCI" -and $env:BUILD_RESULT -eq "Failed") {
               # Get the commit details of the failed run
-              $failedCommit = $env:BUILD_SOURCEVERSION
+              $failedCommit = $env:Build.SourceVersion
 
               # Get the changes in the failed commit using Git
               $failedChanges = git diff-tree --no-commit-id --name-only -r $failedCommit
@@ -55,7 +55,7 @@ stages:
           # Your regular pipeline steps go here
 
           # Optionally, save the commit details for the current run
-          $env:BUILD_SOURCEVERSION > "$env:BUILD_SOURCESDIRECTORY\current_commit.txt"
+          $env:Build.SourceVersion > "$env:BUILD_SOURCESDIRECTORY\current_commit.txt"
 
     - task: PowerShell@2
       displayName: 'Check latest update'
